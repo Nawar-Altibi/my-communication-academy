@@ -34,6 +34,7 @@ test_driver/integration_response_data.json
 .pub/
 /build/
 /coverage/
+/lib/l10n/app_localizations*.dart
 
 # Symbolication related
 app.*.symbols

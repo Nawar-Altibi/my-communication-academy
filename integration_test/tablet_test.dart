@@ -47,7 +47,10 @@ void main() {
     await tester.enterText(find.byType(TextField), 'deep');
     await tester.pump(const Duration(milliseconds: 1700));
     await tester.pumpAndSettle();
-    final aiFilter = find.descendant(of: find.byType(ChoiceChip), matching: find.text('AI'));
+    final aiFilter = find.descendant(
+      of: find.byType(ChoiceChip),
+      matching: find.text('AI'),
+    );
     await tester.ensureVisible(aiFilter);
     await tester.pumpAndSettle();
     await tester.tap(aiFilter);
