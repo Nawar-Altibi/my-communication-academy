@@ -16,6 +16,7 @@ class CatalogPage extends StatefulWidget {
 
 class _CatalogPageState extends State<CatalogPage> {
   final search = TextEditingController();
+  final scroll = ScrollController();
   DetailController? selected;
   int reportedFailures = 0;
   String _lastQuery = '';
@@ -39,6 +40,7 @@ class _CatalogPageState extends State<CatalogPage> {
         _lastQuery != controller.query || _lastCategory != controller.category;
     _lastQuery = controller.query;
     _lastCategory = controller.category;
+    if (criteriaChanged && scroll.hasClients) scroll.jumpTo(0);
     if (criteriaChanged ||
         (selected != null &&
             controller.state == LoadState.loaded &&
@@ -79,6 +81,7 @@ class _CatalogPageState extends State<CatalogPage> {
     controller.removeListener(_changed);
     selected?.dispose();
     search.dispose();
+    scroll.dispose();
     super.dispose();
   }
 
@@ -173,6 +176,7 @@ class _CatalogPageState extends State<CatalogPage> {
   Widget _catalog(BuildContext context) => RefreshIndicator(
     onRefresh: () => controller.load(refresh: true),
     child: CustomScrollView(
+      controller: scroll,
       key: const PageStorageKey('catalog'),
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [

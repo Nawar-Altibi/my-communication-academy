@@ -20,6 +20,8 @@ void main() {
     Future<void> search(String value) async {
       await tester.enterText(find.byType(TextField), value);
       await tester.pump(const Duration(milliseconds: 350));
+      // Wait for the fake API even if its loading sliver is offscreen.
+      await tester.pump(const Duration(milliseconds: 1300));
       await tester.pumpAndSettle();
     }
 
