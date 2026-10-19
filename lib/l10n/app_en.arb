@@ -17,7 +17,7 @@
   "lessons": "Course lessons", "emptyLessons": "No lessons available yet", "checkBack": "Please check back later.",
   "preview": "Preview", "available": "Available", "locked": "Locked", "lockedMessage": "Enroll in this course to access this lesson.",
   "chooseTitle": "Your next skill starts here", "chooseMessage": "Select a course to explore its lessons.",
-  "language": "عربي", "switchLanguage": "Switch to Arabic", "back": "Back to courses", "loading": "Loading courses",
+  "back": "Back to courses", "loading": "Loading courses",
   "courseCount": "{count, plural, =1{1 course} other{{count} courses}}", "@courseCount": {"placeholders": {"count": {"type": "int"}}},
   "minuteCount": "{count} min", "@minuteCount": {"placeholders": {"count": {"type": "int"}}},
   "secondCount": "{minutes} min {seconds} sec", "@secondCount": {"placeholders": {"minutes": {"type": "int"}, "seconds": {"type": "int"}}},

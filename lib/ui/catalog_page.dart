@@ -114,10 +114,9 @@ class _CatalogPageState extends State<CatalogPage> {
                 showLogo: wide || selected == null,
               ),
               actions: [
-                _LanguageButton(
-                  onPressed: () => controller.setLanguage(
-                    controller.language == 'en' ? 'ar' : 'en',
-                  ),
+                _LanguageSwitch(
+                  language: controller.language,
+                  onChanged: controller.setLanguage,
                 ),
                 const SizedBox(width: 12),
               ],
@@ -353,22 +352,33 @@ class _AppTitle extends StatelessWidget {
   }
 }
 
-class _LanguageButton extends StatelessWidget {
-  const _LanguageButton({required this.onPressed});
-  final VoidCallback onPressed;
+class _LanguageSwitch extends StatelessWidget {
+  const _LanguageSwitch({required this.language, required this.onChanged});
+  final String language;
+  final ValueChanged<String> onChanged;
   @override
-  Widget build(BuildContext context) => Tooltip(
-    message: context.t.switchLanguage,
-    child: FilledButton.tonalIcon(
-      onPressed: onPressed,
-      icon: const Icon(Icons.translate_rounded, size: 18),
-      label: Text(
-        context.t.language,
-        style: const TextStyle(fontWeight: FontWeight.w700),
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    // Keep EN on the left in both languages so the control does not jump.
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: SegmentedButton<String>(
+        showSelectedIcon: false,
+        segments: const [
+          ButtonSegment(value: 'en', label: Text('EN'), tooltip: 'English'),
+          ButtonSegment(value: 'ar', label: Text('عربي'), tooltip: 'العربية'),
+        ],
+        selected: {language},
+        onSelectionChanged: (value) => onChanged(value.single),
+        style: SegmentedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          selectedBackgroundColor: colors.primary,
+          selectedForegroundColor: colors.onPrimary,
+          textStyle: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
       ),
-      style: FilledButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-      ),
-    ),
-  );
+    );
+  }
 }

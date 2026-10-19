@@ -38,7 +38,7 @@ void main() {
     expect(find.text('دروس الدورة'), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
     await binding.takeScreenshot('tablet-ar');
-    await tester.tap(find.text('English'));
+    await tester.tap(find.text('EN'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byType(TextField));
     await tester.pumpAndSettle();
