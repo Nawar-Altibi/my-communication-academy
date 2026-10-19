@@ -11,6 +11,8 @@ flutter pub get
 flutter run
 ```
 
+On the assessment Windows machine, use `./scripts/run_android.ps1 -DeviceId <android-device-id>` from PowerShell. It selects the isolated Flutter 3.47.7 SDK next to this project; `-FlutterSdk C:\path\to\flutter` overrides the SDK path. Run `flutter devices` to find an ID. If the compiler reports "Out of memory", free host memory before retrying; that failure occurs during the Windows build, before app launch.
+
 The app deliberately uses the default API failures. Searching `fail` fails; the fifth catalog request fails; Python details fail on the first attempt; Optical Fiber details return 404. These are expected assessment cases.
 
 ## Check
