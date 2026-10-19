@@ -140,8 +140,8 @@ class _CatalogPageState extends State<CatalogPage> {
                         ),
                       ],
                     )
-                : Stack(
-                    fit: StackFit.expand,
+                  : Stack(
+                      fit: StackFit.expand,
                       children: [
                         Offstage(
                           offstage: selected != null,

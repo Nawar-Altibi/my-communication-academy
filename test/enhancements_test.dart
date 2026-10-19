@@ -210,7 +210,14 @@ void main() {
     tester.view.physicalSize = const Size(390, 844);
     await tester.pumpAndSettle();
     expect(repo.details.length, 1);
-    await tester.scrollUntilVisible(find.text('دروس الدورة'), 180, scrollable: find.descendant(of: find.byType(DetailBody), matching: find.byType(Scrollable)));
+    await tester.scrollUntilVisible(
+      find.text('دروس الدورة'),
+      180,
+      scrollable: find.descendant(
+        of: find.byType(DetailBody),
+        matching: find.byType(Scrollable),
+      ),
+    );
     expect(find.text('دروس الدورة'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
