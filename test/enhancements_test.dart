@@ -173,6 +173,7 @@ void main() {
   testWidgets('Arabic tablet stays RTL and overflow-free at text scale 1.5', (
     tester,
   ) async {
+    final semantics = tester.ensureSemantics();
     tester.view.physicalSize = const Size(1100, 900);
     tester.view.devicePixelRatio = 1;
     tester.platformDispatcher.textScaleFactorTestValue = 1.5;
@@ -206,6 +207,9 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('دروس الدورة'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('.*مقفل.*')), findsOneWidget);
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     expect(tester.takeException(), isNull);
     tester.view.physicalSize = const Size(390, 844);
     await tester.pumpAndSettle();
@@ -220,6 +224,7 @@ void main() {
     );
     expect(find.text('دروس الدورة'), findsOneWidget);
     expect(tester.takeException(), isNull);
+    semantics.dispose();
   });
   testWidgets(
     'broken images use stable placeholder and expose no redundant semantics',

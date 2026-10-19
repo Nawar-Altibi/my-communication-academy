@@ -18,7 +18,7 @@
   "preview": "Preview", "available": "Available", "locked": "Locked", "lockedMessage": "Enroll in this course to access this lesson.",
   "chooseTitle": "Your next skill starts here", "chooseMessage": "Select a course to explore its lessons.",
   "language": "العربية", "back": "Back to courses", "loading": "Loading courses",
-  "courseCount": "{count} courses", "@courseCount": {"placeholders": {"count": {"type": "int"}}},
+  "courseCount": "{count, plural, =1{1 course} other{{count} courses}}", "@courseCount": {"placeholders": {"count": {"type": "int"}}},
   "minuteCount": "{count} min", "@minuteCount": {"placeholders": {"count": {"type": "int"}}},
   "secondCount": "{minutes} min {seconds} sec", "@secondCount": {"placeholders": {"minutes": {"type": "int"}, "seconds": {"type": "int"}}},
   "lessonNumber": "Lesson {number}", "@lessonNumber": {"placeholders": {"number": {"type": "int"}}},

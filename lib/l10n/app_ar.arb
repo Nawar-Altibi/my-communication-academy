@@ -17,7 +17,7 @@
   "preview": "معاينة مجانية", "available": "متاح", "locked": "مقفل", "lockedMessage": "يجب الاشتراك في الدورة للوصول إلى هذا الدرس.",
   "chooseTitle": "مهارتك التالية بانتظارك", "chooseMessage": "اختر دورة لاستكشاف دروسها.",
   "language": "English", "back": "العودة إلى الدورات", "loading": "جارٍ تحميل الدورات",
-  "courseCount": "{count} دورة", "minuteCount": "{count} دقيقة", "secondCount": "{minutes} دقيقة و{seconds} ثانية",
+  "courseCount": "{count, plural, =0{لا توجد دورات} =1{دورة واحدة} =2{دورتان} few{{count} دورات} other{{count} دورة}}", "minuteCount": "{count} دقيقة", "secondCount": "{minutes} دقيقة و{seconds} ثانية",
   "lessonNumber": "الدرس {number}", "playing": "جارٍ التشغيل: {title}", "totalDuration": "المدة الإجمالية: {duration}",
   "partialDuration": "{duration} معروفة · عدد الدروس ذات المدة غير المتاحة: {count}",
   "savedCatalog": "دورات محفوظة · {time}", "openCourse": "فتح الدورة: {title}"
