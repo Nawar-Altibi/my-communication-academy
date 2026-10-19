@@ -1,0 +1,23 @@
+name: Flutter checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Check authored Dart formatting
+        run: dart format --output=none --set-exit-if-changed lib/main.dart lib/data lib/state lib/ui test integration_test test_driver
+      - run: flutter analyze
+      - run: flutter test
+      - name: Verify supplied API bytes
+        run: echo '939f402be05c4deb5e81fe88f05376e3ef6a1163e4ccb4205bae53ffbc981cef  lib/provided/fake_course_api.dart' | sha256sum --check
