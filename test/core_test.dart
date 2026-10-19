@@ -32,6 +32,42 @@ const sample = Course(id: 'a', title: 'Network basics');
 Future<void> flush() => Future<void>.delayed(Duration.zero);
 
 void main() {
+  test('API query/category combine and default fifth request fails', () async {
+    final repo = ApiCourseRepository(FakeCourseApi(latencyScale: 0));
+    final deep = await repo.fetchCatalog(query: 'deep', category: 'ai');
+    expect(deep.map((c) => c.id), ['c-111']);
+    expect((await repo.fetchCatalog(category: 'ai')).length, 2);
+    expect((await repo.fetchCatalog(query: 'net')).length, 2);
+    expect(await repo.fetchCatalog(query: 'zzz'), isEmpty);
+    await expectLater(repo.fetchCatalog(), throwsA(isA<CourseFailure>()));
+    expect((await repo.fetchCatalog()).length, 8);
+    await expectLater(
+      repo.fetchDetail('c-108'),
+      throwsA(
+        isA<CourseFailure>().having(
+          (e) => e.kind,
+          'kind',
+          FailureKind.unavailable,
+        ),
+      ),
+    );
+  });
+  test('reverse-ordered successes preserve the latest search', () async {
+    final repo = ControlledRepository();
+    final c = CatalogController(repo);
+    c.setQuery('n', immediate: true);
+    c.setQuery('ne', immediate: true);
+    c.setQuery('net', immediate: true);
+    repo.requests[2].result.complete([sample]);
+    await flush();
+    repo.requests[1].result.complete([]);
+    repo.requests[0].result.complete([]);
+    await flush();
+    expect(c.courses, [sample]);
+    expect(c.query, 'net');
+    expect(c.state, LoadState.loaded);
+    c.dispose();
+  });
   test('provided malformed catalog yields eight unique safe courses', () async {
     final repo = ApiCourseRepository(
       FakeCourseApi(failEvery: 0, latencyScale: 0),
