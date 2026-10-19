@@ -7,6 +7,7 @@ import 'package:my_communication_academy/provided/fake_course_api.dart';
 import 'package:my_communication_academy/state/catalog_controller.dart';
 import 'package:my_communication_academy/state/detail_controller.dart';
 import 'package:my_communication_academy/ui/academy_app.dart';
+import 'package:my_communication_academy/l10n/app_localizations.dart';
 
 class ControlledRepository implements CourseRepository {
   final requests =
@@ -189,6 +190,8 @@ void main() {
     unawaited(c.load());
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
         home: Scaffold(body: DetailBody(controller: c)),
       ),
     );

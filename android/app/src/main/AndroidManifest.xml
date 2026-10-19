@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application
-        android:label="my_communication_academy"
+    <uses-permission android:name="android.permission.INTERNET"/><application
+        android:label="My Communication Academy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
