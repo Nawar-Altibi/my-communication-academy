@@ -240,4 +240,23 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     c.dispose();
   });
+  testWidgets('leaving the detail view before completion is safe', (
+    tester,
+  ) async {
+    final repo = ControlledRepository();
+    await tester.pumpWidget(AcademyApp(repository: repo));
+    repo.requests.single.result.complete([sample]);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text(sample.title));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(sample.title));
+    await tester.pump();
+    expect(repo.details, hasLength(1));
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    repo.details.single.completeError(Exception('late response'));
+    await tester.pumpAndSettle();
+    expect(find.text(sample.title), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

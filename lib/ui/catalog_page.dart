@@ -65,6 +65,7 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   void _open(Course course) {
+    FocusScope.of(context).unfocus();
     if (selected?.id == course.id) return;
     selected?.dispose();
     setState(
@@ -94,6 +95,8 @@ class _CatalogPageState extends State<CatalogPage> {
           },
           child: Scaffold(
             appBar: AppBar(
+              toolbarHeight:
+                  56 * MediaQuery.textScalerOf(context).scale(1).clamp(1, 1.5),
               leading: !wide && selected != null
                   ? IconButton(
                       tooltip: context.t.back,
@@ -105,6 +108,8 @@ class _CatalogPageState extends State<CatalogPage> {
                 !wide && selected != null
                     ? context.t.details
                     : context.t.academy,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,

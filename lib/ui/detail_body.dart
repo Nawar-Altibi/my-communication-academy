@@ -137,11 +137,13 @@ class DetailBody extends StatelessWidget {
   );
 
   void _play(BuildContext context, bool available, String title) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            available ? context.t.playing(title) : context.t.lockedMessage,
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              available ? context.t.playing(title) : context.t.lockedMessage,
+            ),
           ),
-        ),
-      );
+        );
 }

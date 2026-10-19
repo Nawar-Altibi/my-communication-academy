@@ -30,6 +30,7 @@ void main() {
 
     Future<void> open(String title) async {
       await tester.ensureVisible(find.text(title).first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(title).first);
       await tester.pumpAndSettle();
     }

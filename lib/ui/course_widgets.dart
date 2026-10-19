@@ -140,8 +140,8 @@ class CourseImage extends StatelessWidget {
               url!,
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => placeholder,
-              loadingBuilder: (_, child, progress) =>
-                  progress == null ? child : placeholder,
+              frameBuilder: (_, child, frame, _) =>
+                  frame == null ? placeholder : child,
             ),
     );
   }
