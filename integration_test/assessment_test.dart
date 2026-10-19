@@ -4,7 +4,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:my_communication_academy/data/course_repository.dart';
 import 'package:my_communication_academy/provided/fake_course_api.dart';
 import 'package:my_communication_academy/ui/academy_app.dart';
-import 'package:my_communication_academy/ui/catalog_page.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -28,12 +27,6 @@ void main() {
       // Wait for the fake API even if its loading sliver is offscreen.
       await tester.pump(const Duration(milliseconds: 1300));
       await tester.pumpAndSettle();
-      final catalog = tester
-          .widget<CatalogPage>(find.byType(CatalogPage))
-          .controller;
-      debugPrint(
-        'Search "$value": ${catalog.state}, query="${catalog.query}", ids=${catalog.courses.map((c) => c.id).toList()}',
-      );
     }
 
     Future<void> back() async {
@@ -42,9 +35,6 @@ void main() {
     }
 
     Future<void> open(String title) async {
-      if (find.text(title).evaluate().isEmpty) {
-        await binding.takeScreenshot('unexpected-catalog-state');
-      }
       await tester.ensureVisible(find.text(title).first);
       await tester.pumpAndSettle();
       await tester.tap(find.text(title).first);
@@ -110,7 +100,7 @@ void main() {
     await back();
 
     await search('');
-    await tester.tap(find.text('العربية'));
+    await tester.tap(find.text('عربي'));
     await tester.pumpAndSettle();
     await binding.takeScreenshot('catalog-ar');
     await search('Fundamentals');

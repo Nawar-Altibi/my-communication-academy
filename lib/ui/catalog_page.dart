@@ -107,24 +107,19 @@ class _CatalogPageState extends State<CatalogPage> {
                       icon: const Icon(Icons.arrow_back),
                     )
                   : null,
-              title: Text(
-                !wide && selected != null
+              title: _AppTitle(
+                text: !wide && selected != null
                     ? context.t.details
                     : context.t.academy,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
+                showLogo: wide || selected == null,
               ),
               actions: [
-                TextButton(
+                _LanguageButton(
                   onPressed: () => controller.setLanguage(
                     controller.language == 'en' ? 'ar' : 'en',
                   ),
-                  child: Text(context.t.language),
                 ),
+                const SizedBox(width: 12),
               ],
             ),
             body: SafeArea(
@@ -314,6 +309,66 @@ class _CatalogPageState extends State<CatalogPage> {
           ),
         ],
       ],
+    ),
+  );
+}
+
+class _AppTitle extends StatelessWidget {
+  const _AppTitle({required this.text, required this.showLogo});
+  final String text;
+  final bool showLogo;
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        if (showLogo) ...[
+          ExcludeSemantics(
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.cell_tower_rounded,
+                size: 20,
+                color: colors.onPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LanguageButton extends StatelessWidget {
+  const _LanguageButton({required this.onPressed});
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: context.t.switchLanguage,
+    child: FilledButton.tonalIcon(
+      onPressed: onPressed,
+      icon: const Icon(Icons.translate_rounded, size: 18),
+      label: Text(
+        context.t.language,
+        style: const TextStyle(fontWeight: FontWeight.w700),
+      ),
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+      ),
     ),
   );
 }

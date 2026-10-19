@@ -33,7 +33,7 @@ void main() {
     expect(find.text('Course lessons'), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
     await binding.takeScreenshot('tablet-en');
-    await tester.tap(find.text('العربية'));
+    await tester.tap(find.text('عربي'));
     await tester.pumpAndSettle();
     expect(find.text('دروس الدورة'), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
@@ -111,7 +111,6 @@ void main() {
         tester.widget<TextField>(find.byType(TextField)).controller!.text,
         'Fundamentals',
       );
-      await binding.takeScreenshot('tablet-saved-catalog');
       await tester.pumpWidget(const SizedBox());
       await store.savePreferences('', null, 'en');
     },

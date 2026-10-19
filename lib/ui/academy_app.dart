@@ -48,11 +48,25 @@ class _AcademyAppState extends State<AcademyApp> {
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: family,
+          fontFamilyFallback: const ['NotoSansArabic'],
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F766E)),
           scaffoldBackgroundColor: const Color(0xFFF6F8FA),
-          appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFF6F8FA)),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            scrolledUnderElevation: 0,
+            centerTitle: false,
+            titleSpacing: 16,
+            shape: Border(bottom: BorderSide(color: Color(0xFFE4E9EE))),
+          ),
+          chipTheme: const ChipThemeData(
+            showCheckmark: false,
+            side: BorderSide(color: Color(0xFFDDE3E8)),
+            shape: StadiumBorder(),
+          ),
           textTheme: ThemeData.light().textTheme.apply(
             fontFamily: family,
+            fontFamilyFallback: const ['NotoSansArabic'],
             bodyColor: const Color(0xFF172B4D),
             displayColor: const Color(0xFF172B4D),
           ),
