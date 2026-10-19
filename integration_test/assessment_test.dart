@@ -42,8 +42,9 @@ void main() {
     }
 
     Future<void> open(String title) async {
-      if (find.text(title).evaluate().isEmpty)
+      if (find.text(title).evaluate().isEmpty) {
         await binding.takeScreenshot('unexpected-catalog-state');
+      }
       await tester.ensureVisible(find.text(title).first);
       await tester.pumpAndSettle();
       await tester.tap(find.text(title).first);
