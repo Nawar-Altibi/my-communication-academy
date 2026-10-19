@@ -1,48 +1,54 @@
 # NOTES
 
 ## How to run
-Flutter 3.47.7 stable / Dart 3.13.5. Tested on an Android emulator (API 36, Pixel 2 profile).
-`flutter pub get`, `flutter run`, `flutter analyze`, `flutter test`. The device flow is in `integration_test/` (see README).
+- Flutter 3.47.7 stable / Dart 3.13.5 for `flutter analyze` and `flutter test`. The app also builds with 3.41.6 (Dart 3.11.4), which is what I have installed locally.
+- Tested on a physical Samsung Galaxy A55 and on an Android 16 (API 36) emulator.
+- `flutter pub get`, then `flutter run`. Tests: `flutter test`. There's also a device flow in `integration_test/` (command in the README).
 
 ## Structure
-Provided API → `ApiCourseRepository` (JSON parsing into typed models, API errors mapped to `CourseFailure`) → `ChangeNotifier` controllers (`CatalogController`, `DetailController`) → widgets. The UI never touches raw JSON. One API instance is shared so its default failure counters behave as in production.
+`lib/provided` holds the fake API, unchanged. `lib/data` wraps it in a small repository that parses the JSON into my own models and turns `ApiException` into a `CourseFailure` (404 = course gone, everything else = temporary). `lib/state` has two `ChangeNotifier` controllers, one for the catalog and one per opened course. `lib/ui` only renders controller state, so none of the widgets ever see raw JSON.
 
-Packages: `flutter_localizations` + `intl` for English/Arabic strings, dates and currency; `shared_preferences` for the saved catalog and last search/category/language; `flutter_lints` for lint rules; `integration_test` for the device flow.
+I went with plain `ChangeNotifier`. For two screens it felt like enough, and it keeps the logic easy to test without widgets.
+
+Packages I added: `intl` + `flutter_localizations` (Arabic/English, dates, currency), `shared_preferences` (remembering the last search/category/language and the last catalog). Dev: `flutter_lints`, `integration_test`.
 
 ## Data-handling decisions
-- Non-map rows, missing/blank titles and non-string IDs (`109`) are skipped: a card without a real title or stable ID is not useful.
-- Duplicate IDs: keep the first valid record (8 courses remain).
-- Price: numbers and numeric strings (`"39.00"`) are accepted; `0` is shown as Free.
-- Unknown category (`quantum`) → shown as "Other" under All; unknown level (`expert`) → "Unspecified".
-- Negative durations and ratings outside 0–5 (`9.2`) or `null` → "unavailable", not clamped, so no fake value is shown.
-- Missing or broken thumbnail → fixed-size placeholder, layout does not move.
-- Missing instructor / blank description → explicit "unavailable" text.
-- Lesson without a title → "Lesson N" from its position; lesson without a duration → unknown, not zero. Integer duration strings (`"600"`) are accepted.
-- Only boolean `true` grants preview or enrollment; `"yes"` does not.
-- Missing `lessons` → empty state; corrupt, duplicate or ID-less lesson rows are skipped.
-- Invalid response envelope → error state, never an empty list.
-- c-101 total shows 43 known minutes plus "1 lesson duration unavailable" instead of a misleading total.
+- **Skipped:** the `"corrupted-row"` string, c-104 (no title) and `109` (numeric id). A card with no title or no stable id isn't something a learner can use.
+- **Duplicates:** c-101 appears twice, and I keep the first one. That leaves 8 courses.
+- **c-103 price `"39.00"`:** parsed as a number. A price of `0` shows "Free".
+- **Unknown values:** category `quantum` shows as "Other" (only under All), and level `expert` shows as "Unspecified". I'd rather show the course than hide it.
+- **Out-of-range values:** c-107 duration `-1` and the ratings `9.2` and `null` show as "unavailable". I didn't clamp them because clamping would show a value that never came from the API.
+- **Images:** a missing or broken thumbnail shows a fixed-size placeholder, so the card height doesn't jump.
+- **Detail:** a missing instructor or an empty description gets an explicit "unavailable" text.
+- **Lessons:** a lesson with no title becomes "Lesson 4" (its position). A missing duration stays unknown instead of 0, so c-101 shows "43 min known · 1 lesson duration unavailable" rather than a wrong total. `"600"` as a string is accepted.
+- **c-103 `isPreview: "yes"`:** not treated as preview. Only a real `true` unlocks a lesson, because guessing in the learner's favour on access felt wrong.
+- **c-111 has no `lessons` field:** treated as an empty list, so it gets the empty-lessons state.
+- **Broken envelope** (no `data` list): shown as an error, not as "no courses".
 
 ## Search and async behavior
-Typing is debounced (300 ms); filter, clear and retry fire immediately. Every criteria change bumps a generation counter before the next request, and a response is applied only if its generation is still current, so slow responses for "n"/"ne" can never replace "net". A failed new search shows the error state (old results are hidden because they no longer match). A failed pull-to-refresh keeps the current list and shows a SnackBar. Controllers ignore results after `dispose`, so leaving a screen early is safe.
+Search is debounced by 300 ms. Category, clear and retry go out immediately. Each time the criteria change I bump a counter, and a response only gets applied if its counter is still the current one. That way the slow "n" response can't land after "net", and a late failure can't overwrite newer results either. When a new search fails I show the error state and hide the old list, because the old results no longer match what's typed.
 
-On startup the last query/category/language are restored; a saved catalog is shown (with its date) only if it matches the restored criteria, and a fresh request is always sent.
+Pull-to-refresh is different: if it fails, the current list stays and a SnackBar says the refresh didn't work. Both controllers ignore anything that completes after `dispose`, which covers pressing back while a course is still loading.
 
 ## Trade-offs and limitations
-- API futures cannot be cancelled, only ignored.
-- Detail is shown inside the catalog page (overlay on phones, side panel from 840 px) instead of a pushed route, so the tablet layout can keep the selection.
-- The cache stores only the last successful list, not images or details. The fake API is local, so offline is tested with a failing repository double.
-- No video, login or enrollment flow; course titles and descriptions are not translated.
-- RTL and text scale 1.5 are covered by tests; no manual TalkBack session yet.
+- The API futures can't be cancelled, only ignored when they come back.
+- The detail opens inside the catalog page (full screen on phones, side panel on tablets) instead of as a pushed route. I did it this way so the tablet layout keeps the selection, but on phones it means there's no route transition.
+- The offline cache only keeps the last catalog list, not images or details. Since the fake API is local, turning off Wi-Fi doesn't break it, so I tested offline with a failing repository in tests.
+- Course content isn't translated; only the app UI is.
+- I checked text scale 1.5 and RTL, but I haven't done a real TalkBack pass.
 
 ## With more time
-1. Cache course details with a clear expiry policy.
-2. More end-to-end device tests.
-3. Accessibility review with a screen-reader user.
+1. Cache course details too, with some expiry rule.
+2. Use a real route for the detail on phones and keep the side panel for tablets.
+3. A proper accessibility pass with TalkBack.
 
 ## AI tool use
-I used OpenAI Codex for planning, much of the implementation and the tests, and Cursor for a final review and small UI polish (AppBar, language button, card and lesson styling).
-Changed or rejected: kept plain `ChangeNotifier` instead of adding a state-management package; rejected coercing `"yes"` into preview access and counting unknown durations as zero.
+I used OpenAI Codex quite a lot as a pair programmer: planning the structure, writing the first versions of the parser, controllers and most tests, and drafting parts of REVIEW.md. Near the end I used Cursor to check the work against the brief and to tidy up the UI (app bar, language button, cards, lesson list).
+
+What I changed or rejected:
+- I kept plain `ChangeNotifier` instead of bringing in Bloc or Riverpod.
+- I didn't accept treating `"yes"` as preview access or counting unknown durations as 0.
+- I dropped extra tooling it produced (an emulator CI workflow and a Windows run script) because it was more than this task needed.
 
 ## Time spent
-Part A: ~ h · Part B: ~ min · Part C: ~ min (fill in before sending).
+About 2 h 50 min in total: Part A ~2 h, Part B ~25 min, Part C ~25 min.
